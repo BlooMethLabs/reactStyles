@@ -4,6 +4,7 @@ import Cockpit from '../components/Cockpit/Cockpit';
 import withClass from '../hoc/withClass';
 import Aux from '../hoc/Aux';
 import classes from './App.css';
+import AuthContext from '../context/auth-context';
 
 class App extends Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class App extends Component {
     showPersons: false,
     showCockpit: true,
     changeCounter: 0,
+    authenticated: false,
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -63,6 +65,10 @@ class App extends Component {
     }));
   };
 
+  loginHandler = () => {
+    this.setState({ authenticated: true });
+  }
+
   deletePersonHandler = (personIndex) => {
     // const persons = this.state.persons.slice();
     const persons = [...this.state.persons];
@@ -96,6 +102,7 @@ class App extends Component {
           persons={this.state.persons}
           clicked={this.deletePersonHandler}
           changed={this.nameChangedHandler}
+          isAuthenticated={this.state.authenticated}
         />
       );
     }
@@ -109,8 +116,10 @@ class App extends Component {
         >
           Button
         </button>
-        {cockpit}
-        {persons}
+        <AuthContext.Provider value={{ authenticated: this.state.authenticated, login: this.loginHandler }}>
+          {cockpit}
+          {persons}
+        </AuthContext.Provider>
       </Aux>
     );
   }
